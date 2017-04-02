@@ -3,6 +3,14 @@
 
 {% block content %}
 <div class="container">
-  <button type="button" class="btn btn-primary">Click me, I make stuff happen</button>
+  <form id="upload-file" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <label for="file">Select a file</label>
+      <input name="file" type="file">
+    </fieldset>
+    <fieldset>
+      <button type="button" class="btn btn-primary">Click me, I make stuff happen (check console doe)</button>
+    </fieldset>
+  </form>
 </div>
 {% endblock %}

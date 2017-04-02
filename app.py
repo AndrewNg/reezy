@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from flask_sslify import SSLify
+from werkzeug.utils import secure_filename
 import os, json
 
 app = Flask(__name__)
@@ -23,4 +24,24 @@ def status():
 # logic stuff here
 @app.route('/process', methods=['GET', 'POST'])
 def process():
-   return json.dumps({'data':'ayy'});
+  # check if the post request has the file part
+  if 'file' not in request.files:
+      flash('No file part')
+      return redirect(request.url)
+  file = request.files['file']
+  # if user does not select file, browser also
+  # submit a empty part without filename
+  if file.filename == '':
+    flash('No selected file')
+    return redirect(request.url)
+  if file and allowed_file(file.filename):
+    filename = secure_filename(file.filename)
+  else:
+    filename = 'u didnt upload a pdf u liar'
+
+  return json.dumps({'data':'the server thinks the file is: ' + filename});
+
+# helper methods
+def allowed_file(filename):
+  return '.' in filename and \
+    filename.rsplit('.', 1)[1].lower() in set(['pdf'])
