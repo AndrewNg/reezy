@@ -1,5 +1,7 @@
 The repo for Reezy (F Baby). Spring 2017 COS 333 project by Samhita Karnati, Kevin Liu, and Andrew Ng.
 
+Have some form of Python 3.x installed.
+
 ## Getting started
 1. pip install -r requirements.txt
 2. export FLASK_APP=app
