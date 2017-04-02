@@ -5,14 +5,14 @@ $('.btn').click(function(e) {
     type: 'POST',
     url: '/process',
     data: form_data,
-            contentType: false,
-            cache: false,
-            processData: false,
-          success: function(result) {
-            console.log(JSON.parse(result).data);
-          },
-          error: function(result) {
-            console.log('error');
-          }
-        });
+    contentType: false,
+    cache: false,
+    processData: false,
+    success: function(result) {
+      console.log(JSON.parse(result).data);
+    },
+    error: function(result) {
+      console.log('error');
+    }
+    });
 });

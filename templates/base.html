@@ -9,55 +9,55 @@
 </head>
 <body>
   {% set navigation_bar = [
-      ('/', 'index', 'Home'),
-      ('/about', 'about', 'About'),
-      ('/status', 'status', 'Status')
+  ('/', 'index', 'Home'),
+  ('/about', 'about', 'About'),
+  ('/status', 'status', 'Status')
   ] -%}
 
   {% set active_page = active_page|default('index') -%}
 
   <nav class="navbar navbar-default">
-  <div class="container">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">Reezy</a>
-    </div>
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">Reezy</a>
+      </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        {% for href, id, caption in navigation_bar %}
-        <li {% if id == active_page %} class="active"{% endif %}>
-          <a href="{{ href|e }}">{{ caption|e }}</a>
-        </li>
-        {% endfor %}
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-{% with messages = get_flashed_messages() %}
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          {% for href, id, caption in navigation_bar %}
+          <li {% if id == active_page %} class="active"{% endif %}>
+            <a href="{{ href|e }}">{{ caption|e }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+  {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <ul class=flashes>
+  <ul class=flashes>
     {% for message in messages %}
-      <li>{{ message }}</li>
+    <li>{{ message }}</li>
     {% endfor %}
-    </ul>
+  </ul>
   {% endif %}
-{% endwith %}
-{% block content %}{% endblock %}
-<div class="navbar navbar-default navbar-fixed-bottom">
-  <div class="container">
-    <p class="navbar-text">Made in Princeton by Samhita Karnati '18, Kevin Liu '18, Andrew Ng '18</p>
+  {% endwith %}
+  {% block content %}{% endblock %}
+  <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container">
+      <p class="navbar-text">Made in Princeton by Samhita Karnati '18, Kevin Liu '18, Andrew Ng '18</p>
+    </div>
   </div>
-</div>
-<script src="{{ url_for('.static', filename='js/jquery-2.2.4.min.js')}}"></script>
-<script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('.static', filename='js/jquery-2.2.4.min.js')}}"></script>
+  <script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
