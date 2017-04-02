@@ -4,7 +4,7 @@ Have some form of Python 3.x installed.
 
 ## Getting started
 1. pip install -r requirements.txt
-2. export FLASK_APP=app
+2. export FLASK_APP=app.py
 3. flask run
 4. navigate to localhost:5000
 5. woo success
