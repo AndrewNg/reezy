@@ -5,13 +5,12 @@
   <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="{{ url_for('.static', filename='css/main.css') }}" rel="stylesheet">
-  <script src="{{ url_for('.static', filename='js/jquery-2.2.4.min.js')}}"></script>
-  <script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
 </head>
 <body>
   {% set navigation_bar = [
       ('/', 'index', 'Home'),
-      ('/status', 'status', 'Status'),
+      ('/about', 'about', 'About'),
+      ('/status', 'status', 'Status')
   ] -%}
 
   {% set active_page = active_page|default('index') -%}
@@ -42,5 +41,13 @@
   </div><!-- /.container-fluid -->
 </nav>
 {% block content %}{% endblock %}
+<div class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    <p class="navbar-text">Made in Princeton by Samhita Karnati '18, Kevin Liu '18, Andrew Ng '18</p>
+  </div>
+</div>
+<script src="{{ url_for('.static', filename='js/jquery-2.2.4.min.js')}}"></script>
+<script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
