@@ -5,6 +5,7 @@ import os, json
 
 app = Flask(__name__)
 app.debug = True # for autoreload
+app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024 # gimme dat big file (but not too big)
 if 'DYNO' in os.environ: # only trigger SSLify if the app is running on Heroku
   sslify = SSLify(app)
 
