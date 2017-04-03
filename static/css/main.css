@@ -1790,7 +1790,7 @@
 			-webkit-justify-content: center;
 			-ms-justify-content: center;
 			justify-content: center;
-			text-align: center;
+			text-align: top;
 			padding: 3em 0 3em 0;
 		}
 
@@ -2093,8 +2093,8 @@
 /* Intro */
 
 	#intro {
-		background: url("images/overlay.png"), url("../../images/intro.jpg");
-		background-size: 256px 256px, cover;
+		background: url("../images/landingbkg.jpg");
+		background-size: 100%;
 		background-attachment: fixed, fixed;
 		background-position: top left, bottom center;
 		background-repeat: repeat, no-repeat;

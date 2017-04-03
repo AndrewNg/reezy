@@ -2,15 +2,28 @@
 {% set active_page = "index" %}
 
 {% block content %}
-<div class="container">
-  <form id="upload-file" method="post" enctype="multipart/form-data">
-    <fieldset>
-      <label for="file">Select a file</label>
-      <input name="file" type="file">
-    </fieldset>
-    <fieldset>
-      <button type="button" class="btn btn-primary">Click me, I make stuff happen (check console doe)</button>
-    </fieldset>
-  </form>
-</div>
+
+
+
+<!-- Intro -->
+	<section id="intro" class="main style1 dark fullscreen">
+		<div class="content">
+			<header>
+				<h2 style="color:#C44D58">Reezy</h2>
+			</header>
+			<p style="color:#784B79">Reading Made Easy</p>
+		</div>
+		<!-- <div class="container">
+				<form id="upload-file" method="post" enctype="multipart/form-data">
+			<fieldset>
+	    		<label for="file">Select a file</label>
+	    		<input name="file" type="file">
+	    	</fieldset>
+	    	<fieldset>
+	      		<button type="button" class="btn btn-primary">Click me, I make stuff happen (check console doe)</button>
+	    	</fieldset>
+	  		</form>
+		</div> -->
+	</section>
+
 {% endblock %}
