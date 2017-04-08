@@ -11,3 +11,8 @@ Have some form of Python 3.x installed.
 
 ## Editing the codebase
 External js is in static. CSS and images go there too. Most of the backend logic will be in app.py.
+
+## brew packages
+imagemagick@6 (brew link --force imagemagick@6)
+ghostscript
+tessearct

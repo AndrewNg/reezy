@@ -2,10 +2,16 @@ from flask import Flask, render_template, request, redirect
 from flask_sslify import SSLify
 from werkzeug.utils import secure_filename
 import os, json
+import pytesseract
+from wand.image import Image
+from PIL import Image as PImage
 
 app = Flask(__name__)
-app.debug = True # for autoreload
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024 # gimme dat big file (but not too big)
+app.config.update(
+  PROPAGATE_EXCEPTIONS = True,
+  MAX_CONTENT_LENGTH = 32 * 1024 * 1024,
+  UPLOAD_FOLDER = './files'
+)
 if 'DYNO' in os.environ: # only trigger SSLify if the app is running on Heroku
   sslify = SSLify(app)
 
@@ -34,11 +40,23 @@ def process():
   if file.filename == '':
     return json.dumps({'data':'no file name dumbass'});
   if file and allowed_file(file.filename):
-    filename = secure_filename(file.filename)
-  else:
-    filename = 'u didnt upload a pdf u liar'
+    fname = secure_filename(file.filename)
+    fname_without_extension = fname.split('.')[0]
+    path_to_file = os.path.join(app.config['UPLOAD_FOLDER'], fname)
+    file.save(path_to_file)
 
-  return json.dumps({'data':'the server thinks the file is: ' + filename});
+    with Image(filename=path_to_file, resolution=300) as img:
+      with img.convert('png') as converted:
+        converted.save(filename=fname_without_extension + '.png')
+
+    png = PImage.open(fname_without_extension + '.png')
+    png.load()
+    response_string = pytesseract.image_to_string(png)
+
+  else:
+    response_string = 'u didnt upload a pdf u liar'
+
+  return json.dumps({'data':'the server thinks the file is: ' + response_string});
 
 # helper methods
 def allowed_file(filename):
