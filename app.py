@@ -5,6 +5,7 @@ import os, json
 import pytesseract
 from wand.image import Image
 from PIL import Image as PImage
+from gtts import gTTS
 
 app = Flask(__name__)
 app.config.update(
@@ -55,6 +56,9 @@ def process():
 
   else:
     response_string = 'u didnt upload a pdf u liar'
+
+  tts = gTTS(text=response_string, lang='en')
+  tts.save('reezy.mp3')
 
   return json.dumps({'data':'the server thinks the file is: ' + response_string});
 
