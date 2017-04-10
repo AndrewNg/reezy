@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, make_response
 from flask_sslify import SSLify
 from werkzeug.utils import secure_filename
-import os, json
+import os, json, glob
 import pytesseract
 from wand.image import Image
 from PIL import Image as PImage
@@ -48,17 +48,25 @@ def process():
 
     with Image(filename=path_to_file, resolution=300) as img:
       with img.convert('png') as converted:
-        converted.save(filename=fname_without_extension + '.png')
+        converted.save(filename=os.path.join(app.config['UPLOAD_FOLDER'], fname_without_extension) + '.png')
 
-    png = PImage.open(fname_without_extension + '.png')
-    png.load()
-    response_string = pytesseract.image_to_string(png)
+    # samhita's code to iterate over pngs
+    response_string = ""
+    for filename in glob.iglob('./files/*.png'):
+      print('hey i found a png homie')
+      png = PImage.open(filename)
+      png.load()
+      response_string = response_string + pytesseract.image_to_string(png.convert('RGB'))
 
   else:
     response_string = 'u didnt upload a pdf u liar'
 
   tts = gTTS(text=response_string, lang='en')
   tts.save('reezy.mp3')
+
+  # clean up
+  for file in glob.iglob('./files/*'):
+    os.remove(file)
 
   return json.dumps({'data':'the server thinks the file is: ' + response_string});
 
