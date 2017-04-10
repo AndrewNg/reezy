@@ -4,4 +4,4 @@ flask-sslify==0.1.5
 pillow==4.1.0
 pytesseract==0.1.6
 wand==0.4.4
-gtts=1.1.8
+gtts==1.1.8
