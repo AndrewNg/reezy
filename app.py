@@ -8,7 +8,7 @@ from PIL import Image as PImage
 from gtts import gTTS
 from tempfile import TemporaryFile
 import boto3
-# import pusher
+import pusher
 
 app = Flask(__name__)
 app.config.update(
@@ -21,12 +21,12 @@ if 'DYNO' in os.environ: # only trigger SSLify if the app is running on Heroku
   sslify = SSLify(app)
 
 # initialize pusher
-# pusher_client = pusher.Pusher(
-#   app_id=os.environ['PUSHER_APP_ID'],
-#   key=os.environ['PUSHER_KEY'],
-#   secret=os.environ['PUSHER_SECRET'],
-#   ssl=True
-# )
+pusher_client = pusher.Pusher(
+  app_id=os.environ['PUSHER_APP_ID'],
+  key=os.environ['PUSHER_KEY'],
+  secret=os.environ['PUSHER_SECRET'],
+  ssl=True
+)
 
 # initialize S3
 session = boto3.Session(
@@ -40,8 +40,7 @@ bucket = s3.Bucket('reezy')
 @app.route('/')
 @app.route('/index')
 def index():
-  return render_template('index.html')
-  # return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'])
+  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'])
 
 @app.route('/about')
 def about():
@@ -55,7 +54,7 @@ def status():
 # we now want to store in S3, not local files
 @app.route('/process', methods=['GET', 'POST'])
 def process():
-  # pusher_client.trigger('my-channel', 'my-event', {'message': 'hello world'})
+  pusher_client.trigger('my-channel', 'my-event', {'message': 'hello world'})
   # check if the post request has the file part
   if 'file' not in request.files:
     return json.dumps({'data':'no file dumbass'});
@@ -81,7 +80,7 @@ def process():
           img_page = Image(image=img)
           req_image.append(img_page.make_blob('png'))
         for final_img in req_image:
-          response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)))
+          response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)).convert('RGB'))
 
   else:
     response_string = 'u didnt upload a pdf u liar'
@@ -97,7 +96,6 @@ def process():
 
   # let the user download it, expires after 20 minutes
   url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key}, ExpiresIn=1200)
-  print(url)
 
   return json.dumps({'data':response_string, 'unique_url':url});
 

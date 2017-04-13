@@ -2,6 +2,15 @@
 {% set active_page = "index" %}
 
 {% block content %}
+<script type="text/javascript">
+  var pusher = new Pusher('{{pusher_key}}', {
+    encrypted: true
+  });
+  var channel = pusher.subscribe('my-channel');
+  channel.bind('my-event', function(data) {
+    console.log(data.message);
+  });
+</script>
 <div class="container">
   <form id="upload-file" method="post" enctype="multipart/form-data">
     <fieldset>
