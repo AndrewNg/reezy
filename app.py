@@ -92,8 +92,8 @@ def process():
   f.seek(0)
   bucket.put_object(Key='reezy.mp3', Body=f)
 
-  # let the user download it
-  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': 'reezy.mp3'})
+  # let the user download it, expires after 20 minutes
+  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': 'reezy.mp3'}, ExpiresIn=1200)
 
   return json.dumps({'data':response_string, 'url':url});
 
