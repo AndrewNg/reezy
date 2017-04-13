@@ -15,7 +15,7 @@ $('.btn').click(function(e) {
     processData: false,
     success: function(result) {
       console.log(JSON.parse(result).data);
-      console.log(JSON.parse(result).url);
+      console.log(JSON.parse(result).unique_url);
     },
     error: function(result) {
       console.log('error');

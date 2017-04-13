@@ -97,8 +97,9 @@ def process():
 
   # let the user download it, expires after 20 minutes
   url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key}, ExpiresIn=1200)
+  print(url)
 
-  return json.dumps({'data':response_string, 'url':url});
+  return json.dumps({'data':response_string, 'unique_url':url});
 
 # helper methods
 def allowed_file(filename):
