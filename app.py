@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, make_response
 from flask_sslify import SSLify
 from werkzeug.utils import secure_filename
-import os, json, glob, io
+import os, json, glob, io, uuid
 import pytesseract
 from wand.image import Image
 from PIL import Image as PImage
@@ -71,6 +71,7 @@ def process():
     # reading pdf
     blob = file.read()
 
+
     # converting
     req_image = []
     response_string = ""
@@ -90,10 +91,12 @@ def process():
   f = TemporaryFile()
   tts.write_to_fp(f)
   f.seek(0)
-  bucket.put_object(Key='reezy.mp3', Body=f)
+  # unique key to save
+  unique_key = str(uuid.uuid4()) + '.mp3'
+  bucket.put_object(Key=unique_key, Body=f)
 
   # let the user download it, expires after 20 minutes
-  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': 'reezy.mp3'}, ExpiresIn=1200)
+  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key}, ExpiresIn=1200)
 
   return json.dumps({'data':response_string, 'url':url});
 
