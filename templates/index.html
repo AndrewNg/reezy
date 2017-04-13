@@ -33,7 +33,7 @@
 
     // The process is complete: do whatever you want now, maybe redirect them to their newly created account?
     if (data.progress == 100) {
-      messageBox.html()
+      messageBox.html(JSON.parse(result).unique_url)
     }
   });
 </script>
