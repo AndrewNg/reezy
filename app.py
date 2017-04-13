@@ -33,6 +33,7 @@ session = boto3.Session(
     aws_access_key_id=os.environ['S3_KEY'],
     aws_secret_access_key=os.environ['S3_SECRET']
 )
+client = session.client('s3')
 s3 = session.resource('s3')
 bucket = s3.Bucket('reezy')
 
@@ -91,7 +92,10 @@ def process():
   f.seek(0)
   bucket.put_object(Key='reezy.mp3', Body=f)
 
-  return json.dumps({'data':response_string});
+  # let the user download it
+  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': 'reezy.mp3'})
+
+  return json.dumps({'data':response_string, 'url':url});
 
 # helper methods
 def allowed_file(filename):
