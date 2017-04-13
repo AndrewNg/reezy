@@ -5,3 +5,5 @@ pillow==4.1.0
 pytesseract==0.1.6
 wand==0.4.4
 gtts==1.1.8
+boto3==1.4.4
+pusher==1.6
