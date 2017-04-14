@@ -11,15 +11,62 @@
     console.log(data.message);
   });
 </script>
-<div class="container">
-  <form id="upload-file" method="post" enctype="multipart/form-data">
-    <fieldset>
-      <label for="file">Select a file</label>
-      <input name="file" type="file">
-    </fieldset>
-    <fieldset>
-      <button type="button" class="btn btn-primary">Click me, I make stuff happen (check console doe)</button>
-    </fieldset>
-  </form>
+
+<div class = "container">
+  <div class="contents">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h1> {reezy} </h1>
+    <br>
+    <br>
+  </div>
+  <div class="contents" align="center">
+    <form id="upload-file" method="post" enctype="multipart/form-data">
+      <fieldset>
+        <label for="file">Upload a PDF to get a summarized audio file!</label>
+        <input name="file" type="file">
+      </fieldset>
+      <fieldset>
+        <form>
+          How long should your summary be?
+          <input type="text" value="30 seconds" name="length">
+        </form>
+        <br>
+        <br>
+      </fieldset>
+      <fieldset>
+        <button type="button" class="btn button btn-primary" style="background-color:#800020">Get summarized audio</button>
+      </fieldset>
+    </form>
+  </div>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <div class="contents" align="center">
+    <p><a href="index">Home</a> &middot <a href="about">About</a> &middot <a href="status">Status</a></p>
+  </div>
 </div>
+
+<!-- <div class="container" align="center" style="padding-top:100px;padding-bottom:100px">
+  <h1> {reezy} </h1>
+  <br>
+  <br>
+  <div class="contents" align="center" >
+    <form id="upload-file" method="post" enctype="multipart/form-data">
+      <fieldset>
+        <label for="file">Upload a PDF to get a summarized audio file!</label>
+        <input name="file" type="file">
+      </fieldset>
+      <fieldset>
+        <button type="button" class="btn btn-primary" style="background-color:#800020">Get summarized audio</button>
+      </fieldset>
+    </form>
+  </div>
+</div> -->
 {% endblock %}
