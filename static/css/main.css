@@ -15,4 +15,29 @@ h2 {
 	color:#800020;
 }
 
-button:focus {outline:0;}
+.button1 {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+    color:#800020;
+    background-color: white;
+    border-color: #800020;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.button1:hover {
+	background-color:#800020;
+	color: white;
+	border-color:#800020;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
