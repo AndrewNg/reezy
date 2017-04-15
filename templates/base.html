@@ -6,46 +6,10 @@
   <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Sacramento" rel="stylesheet">
-  <link href="{{ url_for('.static', filename='css/main_new.css') }}" rel="stylesheet">
+  <link href="{{ url_for('.static', filename='css/main.css') }}" rel="stylesheet">
   <script src="{{ url_for('.static', filename='js/pusher.min.js')}}"></script>
 </head>
 <body>
-<<<<<<< HEAD
-=======
-  <!-- {% set navigation_bar = [
-  ('/', 'index', 'Home'),
-  ('/about', 'about', 'About'),
-  ('/status', 'status', 'Status')
-  ] -%}
-
-  {% set active_page = active_page|default('index') -%} -->
-
-  <!-- <nav class="navbar navbar-default">
-    <div class="container">
-      <! Brand and toggle get grouped for better mobile display -->
-      <!-- <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">Reezy</a>
-      </div>
-
-      Collect the nav links, forms, and other content for toggling
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          {% for href, id, caption in navigation_bar %}
-          <li {% if id == active_page %} class="active"{% endif %}>
-            <a href="{{ href|e }}">{{ caption|e }}</a>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-  </nav> -->
->>>>>>> 4ad941ec34acc3087925722b00de018f806a8069
   {% with messages = get_flashed_messages() %}
   {% if messages %}
   <ul class=flashes>
