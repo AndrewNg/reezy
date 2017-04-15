@@ -1,4 +1,4 @@
-$('.btn').click(function(e) {
+$('.summary').click(function(e) {
   e.preventDefault();
   var form_data = new FormData($('#upload-file')[0]);
   var progressBar = $('.progress');
@@ -19,3 +19,9 @@ $('.btn').click(function(e) {
     }
     });
 });
+
+function addTextBox() {
+  var element = document.createElement("input");
+
+  document.getElementById("uploadOptions").appendChild(element);
+}

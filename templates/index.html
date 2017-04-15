@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class = "container">
-  <div class="contents">
+  <div>
     <br>
     <br>
     <br>
@@ -17,10 +17,15 @@
   </div>
   <div class="contents" align="center">
     <form id="upload-file" method="post" enctype="multipart/form-data">
-      <fieldset>
-        <label for="file">Upload a PDF to get a summarized audio file!</label>
-        <input name="file" type="file">
-      </fieldset>
+      <div id="uploadOptions">
+        <fieldset class="fileUpload btn btn-primary button1">
+            <span>Choose File</span>
+            <input class="upload" name="file" type="file">
+        </fieldset>
+        <fieldset class="textInput btn btn-primary button1" onclick="addTextBox()">
+          <span>Copy/Paste Text</span>
+        </fieldset>
+      </div>
       <fieldset>
         <form>
           How long should your summary be?
@@ -43,9 +48,6 @@
   <br>
   <br>
   <br>
-  <div class="foot" align="center">
-    <p><a href="index">Home</a> &middot <a href="about">About</a> &middot <a href="status">Status</a></p>
-  </div>
 </div>
 
 <script type="text/javascript">
