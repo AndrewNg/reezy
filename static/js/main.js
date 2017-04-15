@@ -2,7 +2,7 @@ $('.btn').click(function(e) {
   e.preventDefault();
   var form_data = new FormData($('#upload-file')[0]);
   var progressBar = $('.progress');
-  var messageBox = $('#upload-file').children('.messages')
+  var messageBox = $('.messages')
   progressBar.removeClass('hide');
   $.ajax({
     type: 'POST',
