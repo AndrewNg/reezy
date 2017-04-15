@@ -37,10 +37,13 @@ client = session.client('s3')
 s3 = session.resource('s3')
 bucket = s3.Bucket('reezy')
 
+# generate unique session id for pusher
+session_id = str(uuid.uuid4())
+
 @app.route('/')
 @app.route('/index')
 def index():
-  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'])
+  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'], session_id=session_id)
 
 @app.route('/about')
 def about():
@@ -54,7 +57,6 @@ def status():
 # we now want to store in S3, not local files
 @app.route('/process', methods=['GET', 'POST'])
 def process():
-  pusher_client.trigger('my-channel', 'my-event', {'message': 'hello world'})
   # check if the post request has the file part
   if 'file' not in request.files:
     return json.dumps({'data':'no file dumbass'});
@@ -68,17 +70,20 @@ def process():
     fname = secure_filename(file.filename)
     fname_without_extension = fname.split('.')[0]
     # reading pdf
+    pusher_client.trigger(session_id, 'my-event', {'message': 'uploading file', 'progress': 10})
     blob = file.read()
 
-
+    pusher_client.trigger(session_id, 'my-event', {'message': 'converting file', 'progress': 20})
     # converting
     req_image = []
     response_string = ""
     with Image(blob=blob, resolution=300) as img:
       with img.convert('png') as converted:
+        pusher_client.trigger(session_id, 'my-event', {'message': 'processing pdf', 'progress': 40})
         for single_img in converted.sequence:
           img_page = Image(image=img)
           req_image.append(img_page.make_blob('png'))
+        pusher_client.trigger(session_id, 'my-event', {'message': 'performing OCR', 'progress': 70})
         for final_img in req_image:
           response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)).convert('RGB'))
 
@@ -86,6 +91,7 @@ def process():
     response_string = 'u didnt upload a pdf u liar'
 
   # text to speech
+  pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 90})
   tts = gTTS(text=response_string, lang='en')
   f = TemporaryFile()
   tts.write_to_fp(f)
@@ -96,6 +102,8 @@ def process():
 
   # let the user download it, expires after 20 minutes
   url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key}, ExpiresIn=1200)
+
+  pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
   return json.dumps({'data':response_string, 'unique_url':url});
 
