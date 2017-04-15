@@ -5,6 +5,7 @@
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<<<<<<< Updated upstream
   <link href="{{ url_for('.static', filename='css/main.css') }}" rel="stylesheet">
   <script src="//js.pusher.com/4.0/pusher.min.js"></script>
 </head>
@@ -42,6 +43,13 @@
       </div>
     </div>
   </nav> --> 
+=======
+  <link href="https://fonts.googleapis.com/css?family=Sacramento" rel="stylesheet">
+  <link href="{{ url_for('.static', filename='css/main.css') }}" rel="stylesheet">
+  <script src="{{ url_for('.static', filename='js/pusher.min.js')}}"></script>
+</head>
+<body>
+>>>>>>> Stashed changes
   {% with messages = get_flashed_messages() %}
   {% if messages %}
   <ul class=flashes>
@@ -52,11 +60,9 @@
   {% endif %}
   {% endwith %}
   {% block content %}{% endblock %}
-<!--   <div class="navbar navbar-default navbar-fixed-bottom">
-    <div class="container">
-      <p class="navbar-text">Made in Princeton by Samhita Karnati '18, Kevin Liu '18, Andrew Ng '18</p>
-    </div>
-  </div> -->
+  <div class="foot" align="center">
+    <p><a href="index">Home</a> &middot <a href="about">About</a> &middot <a href="status">Status</a></p>
+  </div>
   <script src="{{ url_for('.static', filename='js/jquery-2.2.4.min.js')}}"></script>
   <script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
