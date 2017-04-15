@@ -1,17 +1,8 @@
 {% extends "base.html" %}
 {% set active_page = "index" %}
 
-{% block content %}
-<script type="text/javascript">
-  var pusher = new Pusher('{{pusher_key}}', {
-    encrypted: true
-  });
-  var channel = pusher.subscribe('my-channel');
-  channel.bind('my-event', function(data) {
-    console.log(data.message);
-  });
-</script>
 
+{% block content %}
 <div class = "container">
   <div>
     <br>
@@ -58,4 +49,25 @@
   <br>
   <br>
 </div>
+
+<script type="text/javascript">
+  var pusher = new Pusher('{{ pusher_key }}', {
+    encrypted: true
+  });
+  var channel = pusher.subscribe('{{ session_id }}');
+
+  channel.bind('my-event', function(data) {
+    console.log(data.message);
+    var messageBox = $('.messages')
+    var progressBar = $('#realtime-progress-bar')
+
+    progressBar.width(data.progress+"%")
+    messageBox.html(data.message)
+
+    // The process is complete: do whatever you want now, maybe redirect them to their newly created account?
+    if (data.progress == 100) {
+      messageBox.html(JSON.parse(result).unique_url)
+    }
+  });
+</script>
 {% endblock %}

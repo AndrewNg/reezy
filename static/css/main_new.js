@@ -1,4 +1,3 @@
-
 $('.summary').click(function(e) {
   e.preventDefault();
   var form_data = new FormData($('#upload-file')[0]);

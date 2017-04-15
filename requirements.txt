@@ -1,6 +1,7 @@
 flask==0.12
 gunicorn==19.1.0
 flask-sslify==0.1.5
+flask-assets==0.12
 pillow==4.1.0
 pytesseract==0.1.6
 wand==0.4.4
