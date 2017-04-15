@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-@import url('https://fonts.googleapis.com/css?family=Sacramento');
-=======
 
->>>>>>> Stashed changes
 
 body {
   font-family: 'Open Sans', sans-serif;
@@ -19,9 +15,6 @@ h2 {
 	color:#800020;
 }
 
-<<<<<<< Updated upstream
-button:focus {outline:0;}
-=======
 .button1 {
     position: relative;
     overflow: hidden;
@@ -48,4 +41,3 @@ button:focus {outline:0;}
     opacity: 0;
     filter: alpha(opacity=0);
 }
->>>>>>> Stashed changes
