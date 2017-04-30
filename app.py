@@ -67,7 +67,7 @@ def process():
     return json.dumps({'data':'sorry, no file'});
   # receiving file
   file = request.files['file']
-  length = int(request.form['length'])
+  length = int(request.form['length'])//12
 
   # if user does not select file, browser also
   # submit a empty part without filename
