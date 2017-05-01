@@ -103,13 +103,16 @@ def process():
 
   # text to speech
   pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 70})
-  tts = gTTS(text=response_string, lang='en')
-  f = TemporaryFile()
-  tts.write_to_fp(f)
-  f.seek(0)
-  # unique key to save
-  unique_key = str(uuid.uuid4()) + '.mp3'
-  bucket.put_object(Key=unique_key, Body=f)
+  if len(response_string) != 0:
+    tts = gTTS(text=response_string, lang='en')
+    f = TemporaryFile()
+    tts.write_to_fp(f)
+    f.seek(0)
+    # unique key to save
+    unique_key = str(uuid.uuid4()) + '.mp3'
+    bucket.put_object(Key=unique_key, Body=f)
+  else:
+    return json.dumps({'data':'there is no text', 'unique_url':'empty'});
 
   # let the user download it, expires after 20 minutes
   url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key}, ExpiresIn=1200)
@@ -124,6 +127,10 @@ def summarize(text, n):
   lower = text.lower()
   remover = str.maketrans('','',string.punctuation)
   words = lower.translate(remover)
+
+  if len(words) == 0:
+    return ""
+
   itertokens = {}
   itertokens['test'] = words
 
