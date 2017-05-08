@@ -1,29 +1,39 @@
 $('.summary').click(function(e) {
-  $('.summary').disabled = true;
-  e.preventDefault();
-  var form_data = new FormData($('#upload-file')[0]);
-
-  form_data.append('file', $('#file').prop("files")[0]);
-
+  var length = $('.length')[0].value;
   var progressBar = $('.progress');
   var messageBox = $('.messages');
-  progressBar.removeClass('hide');
-  $.ajax({
-    type: 'POST',
-    url: '/process',
-    data: form_data,
-    contentType: false,
-    processData: false,
-    success: function(result) {
-      $('summary').disabled = false;
-      r = JSON.parse(result);
+
+  if (length < 6) {
+    $("#alert-text").html('<strong>Please submit a time greater than 10 seconds.</strong>');
+    $(".alert").addClass("in");
+    messageBox.html('');
+    resetExceptFile();
+  }
+
+  else {
+    $('.summary').disabled = true;
+    e.preventDefault();
+    var form_data = new FormData($('#upload-file')[0]);
+
+    form_data.append('file', $('#file').prop("files")[0]);
+
+    progressBar.removeClass('hide');
+    $.ajax({
+      type: 'POST',
+      url: '/process',
+      data: form_data,
+      contentType: false,
+      processData: false,
+      success: function(result) {
+        $('summary').disabled = false;
+        r = JSON.parse(result);
 
       // handle failure cases
       if (r.data == '') {
         $("#alert-text").html('<strong>Sorry, unable to process PDF.</strong>');
         $(".alert").addClass("in");
         messageBox.html('');
-        reset();
+        resetEverything();
       }
 
       // shouldn't happen
@@ -31,11 +41,11 @@ $('.summary').click(function(e) {
         $("#alert-text").html('<strong>Sorry, please submit a file with a name.</strong>');
         $(".alert").addClass("in");
         messageBox.html('');
-        reset();
+        resetEverything();
       }
       else {
         messageBox.html('<a href="' + r.unique_url + '" download>Download the file!</a>')
-        reset();
+        done();
       }
     },
     error: function(result) {
@@ -43,6 +53,7 @@ $('.summary').click(function(e) {
       console.log('error');
     }
   });
+  }
 });
 
 function addTextBox() {
@@ -54,6 +65,7 @@ $(".upload").change(function(){
   var name = $('#file').prop("files")[0].name
   var size = $('#file').prop("files")[0].size
   var type = $('#file').prop("files")[0].type
+  var filename = $('.filename');
 
   if (name.substr(name.length - 4) != '.pdf') {
     $("#alert-text").html('<strong>Wrong file extension.</strong> Please upload a PDF.');
@@ -78,11 +90,13 @@ $(".upload").change(function(){
     $(".summary").removeClass("hide");
   }
 
+  resetExceptFile();
+
   console.log(name + size + type)
 });
 
 // reset everything to default state
-function reset() {
+function resetEverything() {
  var progressBar = $('.progress');
  var messageBox = $('.messages');
  var filename = $('.filename');
@@ -94,4 +108,28 @@ function reset() {
  filename.addClass('hide');
  filename.html('');
  fileUpload.removeClass('hide');
+ messageBox.html('');
+}
+
+// reset everything but keep the file
+function resetExceptFile() {
+ var progressBar = $('.progress');
+ var messageBox = $('.messages');
+ var filename = $('.filename');
+ var summary = $('.summary');
+ var fileUpload = $('.fileUpload')
+
+ progressBar.addClass('hide');
+ messageBox.html('');
+}
+
+// at successful completion
+function done() {
+  var fileUpload = $('.fileUpload')
+  var summary = $('.summary');
+  var buttonText = $('#chooseText')
+
+  fileUpload.removeClass('hide');
+  summary.addClass('hide');
+  buttonText.html('Choose another file');
 }

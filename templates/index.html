@@ -19,17 +19,17 @@
         <form class="inline">
           <div class="form-group">
             <label for="time">Length of summary in seconds:</label>
-            <input type="number" name="length" value="60">
+            <input class = "length" type="number" name="length" value="60">
           </div>
         </form>
       </fieldset>
+      <div class="filename hide"></div>
         <div id="uploadOptions">
           <fieldset class="fileUpload btn btn-primary button1">
-            <span>Choose File</span>
+            <span id = "chooseText">Choose File</span>
             <input class="upload" name="file" type="file" id="file">
           </fieldset>
         </div>
-      <div class="filename hide"></div>
       <fieldset>
         <button type="button" class="summary btn button btn-primary button1 hide">Get summary!</button>
       </fieldset>
