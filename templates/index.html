@@ -45,7 +45,7 @@
 var pusher = new Pusher('{{ pusher_key }}', {
   encrypted: true
 });
-var channel = pusher.subscribe('{{ session_id }}');
+var channel = pusher.subscribe('my-channel');
 
 channel.bind('my-event', function(data) {
   console.log(data.message);

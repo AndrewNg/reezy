@@ -1,4 +1,5 @@
-$('.summary').click(function(e) {
+$('.summary').one('click', function(e) {
+  $('.summary').disabled = true;
   var length = $('.length')[0].value;
   var progressBar = $('.progress');
   var messageBox = $('.messages');
@@ -11,7 +12,6 @@ $('.summary').click(function(e) {
   }
 
   else {
-    $('.summary').disabled = true;
     e.preventDefault();
     var form_data = new FormData($('#upload-file')[0]);
 
@@ -25,7 +25,6 @@ $('.summary').click(function(e) {
       contentType: false,
       processData: false,
       success: function(result) {
-        $('summary').disabled = false;
         r = JSON.parse(result);
 
       // handle failure cases
@@ -49,11 +48,14 @@ $('.summary').click(function(e) {
       }
     },
     error: function(result) {
-      $('summary').disabled = false;
-      console.log('error');
+      $("#alert-text").html('<strong>Sorry, there was a problem processing the PDF.</strong>');
+      $(".alert").addClass("in");
+      messageBox.html('');
+      resetEverything();
     }
   });
   }
+  $('summary').disabled = false;
 });
 
 function addTextBox() {

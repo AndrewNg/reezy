@@ -42,8 +42,8 @@ client = session.client('s3')
 s3 = session.resource('s3')
 bucket = s3.Bucket('reezy')
 
-# generate unique session id for pusher
-session_id = str(uuid.uuid4())
+# channel for pusher
+session_id = 'my-channel'
 
 @app.route('/')
 @app.route('/index')
@@ -115,7 +115,7 @@ def process():
     return json.dumps({'data':'', 'unique_url':'empty'});
 
   # let the user download it, expires after 20 minutes
-  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + file.filename + '.mp3'}, ExpiresIn=1200)
+  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + file.filename[:-4] + '.mp3'}, ExpiresIn=1200)
 
   pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
