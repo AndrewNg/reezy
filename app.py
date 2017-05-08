@@ -72,7 +72,7 @@ def process():
   # if user does not select file, browser also
   # submit a empty part without filename
   if file.filename == '':
-    return json.dumps({'data':'please submit a file with a name'});
+    return json.dumps({'data':'name'});
   if file and allowed_file(file.filename):
     fname = secure_filename(file.filename)
     fname_without_extension = fname.split('.')[0]

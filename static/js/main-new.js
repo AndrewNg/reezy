@@ -1,11 +1,12 @@
 $('.summary').click(function(e) {
+  $('.summary').disabled = true;
   e.preventDefault();
   var form_data = new FormData($('#upload-file')[0]);
 
   form_data.append('file', $('#file').prop("files")[0]);
 
   var progressBar = $('.progress');
-  var messageBox = $('.messages')
+  var messageBox = $('.messages');
   progressBar.removeClass('hide');
   $.ajax({
     type: 'POST',
@@ -14,18 +15,31 @@ $('.summary').click(function(e) {
     contentType: false,
     processData: false,
     success: function(result) {
+      $('summary').disabled = false;
       r = JSON.parse(result);
 
+      // handle failure cases
       if (r.data == '') {
         $("#alert-text").html('<strong>Sorry, unable to process PDF.</strong>');
         $(".alert").addClass("in");
-        progressBar.addClass('hide');
+        messageBox.html('');
+        reset();
+      }
+
+      // shouldn't happen
+      else if (r.data == 'name') {
+        $("#alert-text").html('<strong>Sorry, please submit a file with a name.</strong>');
+        $(".alert").addClass("in");
+        messageBox.html('');
+        reset();
       }
       else {
         messageBox.html('<a href="' + r.unique_url + '" download>Download the file!</a>')
+        reset();
       }
     },
     error: function(result) {
+      $('summary').disabled = false;
       console.log('error');
     }
   });
@@ -66,3 +80,18 @@ $(".upload").change(function(){
 
   console.log(name + size + type)
 });
+
+// reset everything to default state
+function reset() {
+ var progressBar = $('.progress');
+ var messageBox = $('.messages');
+ var filename = $('.filename');
+ var summary = $('.summary');
+ var fileUpload = $('.fileUpload')
+
+ progressBar.addClass('hide');
+ summary.addClass('hide');
+ filename.addClass('hide');
+ filename.html('');
+ fileUpload.removeClass('hide');
+}
