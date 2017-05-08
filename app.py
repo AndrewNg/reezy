@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, request, redirect, make_response, session
 from flask_sslify import SSLify
 from werkzeug.utils import secure_filename
 import os, json, glob, io, uuid, sys, string, operator
@@ -42,13 +42,14 @@ client = session.client('s3')
 s3 = session.resource('s3')
 bucket = s3.Bucket('reezy')
 
-# channel for pusher
-session_id = 'my-channel'
+session['id'] = 'null'
 
 @app.route('/')
 @app.route('/index')
 def index():
-  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'], session_id=session_id)
+  # channel for pusher
+  session['id'] = str(uuid.uuid4())
+  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'], session['id']=session['id'])
 
 @app.route('/about')
 def about():
@@ -77,20 +78,20 @@ def process():
     fname = secure_filename(file.filename)
     fname_without_extension = fname.split('.')[0]
     # reading pdf
-    pusher_client.trigger(session_id, 'my-event', {'message': 'uploading file', 'progress': 10})
+    pusher_client.trigger(session['id'], 'my-event', {'message': 'uploading file', 'progress': 10})
     blob = file.read()
 
-    pusher_client.trigger(session_id, 'my-event', {'message': 'converting file', 'progress': 20})
+    pusher_client.trigger(session['id'], 'my-event', {'message': 'converting file', 'progress': 20})
     # converting
     req_image = []
     response_string = ""
     with Image(blob=blob, resolution=300) as img:
       with img.convert('png') as converted:
-        pusher_client.trigger(session_id, 'my-event', {'message': 'processing pdf', 'progress': 40})
+        pusher_client.trigger(session['id'], 'my-event', {'message': 'processing pdf', 'progress': 40})
         for single_img in converted.sequence:
           img_page = Image(image=single_img)
           req_image.append(img_page.make_blob('png'))
-        pusher_client.trigger(session_id, 'my-event', {'message': 'performing OCR', 'progress': 50})
+        pusher_client.trigger(session['id'], 'my-event', {'message': 'performing OCR', 'progress': 50})
         for final_img in req_image:
           response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)).convert('RGB'))
 
@@ -98,11 +99,11 @@ def process():
     response_string = 'please only upload a pdf'
 
   # summarization
-  pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
+  pusher_client.trigger(session['id'], 'my-event', {'message': 'summarizing', 'progress': 60})
   response_string = summarize(response_string.replace('\n', ' '), length)
 
   # text to speech
-  pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 70})
+  pusher_client.trigger(session['id'], 'my-event', {'message': 'converting to mp3', 'progress': 70})
   if len(response_string) != 0:
     tts = gTTS(text=response_string, lang='en')
     f = TemporaryFile()
@@ -117,7 +118,7 @@ def process():
   # let the user download it, expires after 20 minutes
   url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + file.filename[:-4] + '.mp3'}, ExpiresIn=1200)
 
-  pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
+  pusher_client.trigger(session['id'], 'my-event', {'message': 'done!', 'progress': 100})
 
   return json.dumps({'data':response_string, 'unique_url':url});
 

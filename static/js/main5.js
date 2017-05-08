@@ -93,8 +93,6 @@ $(".upload").change(function(){
   }
 
   resetExceptFile();
-
-  console.log(name + size + type)
 });
 
 // reset everything to default state

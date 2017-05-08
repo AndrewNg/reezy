@@ -11,7 +11,7 @@
 <div class="container centered">
   <div>
     <h1> {reezy} </h1>
-    <h2>Summarized audio for PDFs</h2>
+    <h2 style="text-align: center">Summarized audio for PDFs</h2>
   </div>
   <div class="contents" align="center">
     <form id="upload-file" method="post" enctype="multipart/form-data">
@@ -45,7 +45,7 @@
 var pusher = new Pusher('{{ pusher_key }}', {
   encrypted: true
 });
-var channel = pusher.subscribe('my-channel');
+var channel = pusher.subscribe('{{ session_id }}');
 
 channel.bind('my-event', function(data) {
   console.log(data.message);
