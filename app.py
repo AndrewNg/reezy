@@ -112,10 +112,10 @@ def process():
     unique_key = str(uuid.uuid4()) + '.mp3'
     bucket.put_object(Key=unique_key, Body=f)
   else:
-    return json.dumps({'data':'there is no text', 'unique_url':'empty'});
+    return json.dumps({'data':'', 'unique_url':'empty'});
 
   # let the user download it, expires after 20 minutes
-  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key}, ExpiresIn=1200)
+  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + file.filename + '.mp3'}, ExpiresIn=1200)
 
   pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
