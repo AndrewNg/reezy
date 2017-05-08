@@ -49,7 +49,7 @@ session['id'] = 'null'
 def index():
   # channel for pusher
   session['id'] = str(uuid.uuid4())
-  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'], session['id']=session['id'])
+  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'], 'session_id'=session['id'])
 
 @app.route('/about')
 def about():
