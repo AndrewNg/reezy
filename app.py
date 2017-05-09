@@ -128,7 +128,8 @@ def process(file, filename, form, session_id):
 
   # if it's really big
   if len(req_image) > 20:
-    return json.dumps({'data': 'big'})
+    pusher_client.trigger(session_id, 'done', {'data': 'big'})
+    return
 
   # summarization
   pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
@@ -145,7 +146,8 @@ def process(file, filename, form, session_id):
     unique_key = str(uuid.uuid4()) + '.mp3'
     bucket.put_object(Key=unique_key, Body=f)
   else:
-    return json.dumps({'data':'', 'unique_url':'empty'});
+    pusher_client.trigger(session_id, 'done', {'data':'', 'unique_url':'empty'})
+    return
 
   # let the user download it, expires after 20 minutes
   url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + filename[:-4] + '.mp3'}, ExpiresIn=1200)
@@ -153,6 +155,8 @@ def process(file, filename, form, session_id):
   pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
   pusher_client.trigger(session_id, 'done', {'data': response_string, 'unique_url':url})
+
+  return
 
 # helper methods
 def summarize(text, n):
