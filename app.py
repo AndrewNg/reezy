@@ -75,7 +75,6 @@ def status():
 def call_celery():
   # start
   session_id = session['id']
-  pusher_client.trigger(session_id, 'my-event', {'message': 'initializing...', 'progress': 0})
   files = request.files
   # check if the post request has the file part
   if 'file' not in files:
@@ -137,30 +136,41 @@ def process(file, filename, form, session_id):
   pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
   response_string = summarize(response_string.replace('\n', ' '), length)
 
-  # text to speech
+  # text to speech and regular text file storage
   pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 70})
   if len(response_string) != 0:
+    f_text = TemporaryFile()
+    f_text.write(response_string.encode())
+    f_text.seek(0)
     tts = gTTS(text=response_string, lang='en')
-    f = TemporaryFile()
-    tts.write_to_fp(f)
-    f.seek(0)
+    f_mp3 = TemporaryFile()
+    tts.write_to_fp(f_mp3)
+    f_mp3.seek(0)
     # unique key to save
-    unique_key = str(uuid.uuid4()) + '.mp3'
-    bucket.put_object(Key=unique_key, Body=f)
+    unique_key = str(uuid.uuid4())
+    unique_mp3 = unique_key + '.mp3'
+    unique_text = unique_key + '.txt'
+    bucket.put_object(Key=unique_mp3, Body=f_mp3)
+    bucket.put_object(Key=unique_text, Body=f_text)
+    f_mp3.close()
+    f_text.close()
   else:
     pusher_client.trigger(session_id, 'done', {'data':'', 'unique_url':'empty'})
     return
 
   # let the user download it, expires after 20 minutes
-  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + filename[:-4] + '.mp3'}, ExpiresIn=1200)
+  mp3_url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_mp3, 'ResponseContentDisposition': 'attachment; filename=' + filename[:-4] + '.mp3'}, ExpiresIn=1200)
+  text_url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_text,'ResponseContentDisposition': 'attachment; filename=' + filename[:-4] + '.txt'}, ExpiresIn=1200)
 
   pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
-  pusher_client.trigger(session_id, 'done', {'data': response_string, 'unique_url':url})
+  pusher_client.trigger(session_id, 'done', {'data': response_string, 'mp3_url':mp3_url, 'text_url':text_url})
 
   return
 
-# helper methods
+# cron to clear out S3
+
+# helper methods for summarization
 def summarize(text, n):
   # process the text
   lower = text.lower()
@@ -232,11 +242,3 @@ def get_score(sentence, tfidfs):
 def allowed_file(filename):
   return '.' in filename and \
     filename.rsplit('.', 1)[1].lower() in set(['pdf'])
-
-def store_file(file):
-    s3 = boto3.resource('s3')
-    # Upload a new file
-    fname = secure_filename(file.filename)
-    s3.Bucket('reezy').put_object(Key=fname, Body=file)
-
-    return

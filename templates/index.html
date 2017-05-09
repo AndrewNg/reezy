@@ -97,7 +97,7 @@ channel.bind('done', function(r) {
   }
 
   else {
-    messageBox.html('<a href="' + r.unique_url + '" download>Download the file!</a>')
+    messageBox.html('<a href="' + r.mp3_url + '" download>Download the audio!</a><br><br><a href="' + r.text_url + '" download>Download the text!</a>')
     done();
   }
 })

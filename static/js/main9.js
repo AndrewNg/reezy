@@ -2,8 +2,12 @@ $('.summary').on('click', function(e) {
   e.preventDefault();
   $(".summary").attr("disabled", "disabled");
   var length = $('.length')[0].value;
-  var progressBar = $('.progress');
+  var progressBarDiv = $('.progress');
+  var progressBar = $('#realtime-progress-bar');
   var messageBox = $('.messages');
+  messageBox.html('initializing...');
+  progressBar.width('0%');
+
 
   if (length < 6) {
     $("#alert-text").html('<strong>Please submit a time greater than 10 seconds.</strong>');
@@ -17,7 +21,7 @@ $('.summary').on('click', function(e) {
 
     form_data.append('file', $('#file').prop("files")[0]);
 
-    progressBar.removeClass('hide');
+    progressBarDiv.removeClass('hide');
     $.ajax({
       type: 'POST',
       url: '/process',
