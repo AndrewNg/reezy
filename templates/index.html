@@ -29,12 +29,12 @@
             <span id = "chooseText">Choose File</span>
             <input class="upload" name="file" type="file" id="file">
           </fieldset>
-          <fieldset class="textBoxBtn btn button btn-primary button1">
-            <span id="textBtnText">Copy/Paste Text</span>
+          <fieldset>
+            <button class="modalText btn btn-primary button1" data-toggle="modal" data-target="#modalText">Copy/Paste Text</button>
           </fieldset>
         </div>
       </div>
-      <fieldset class>
+      <fieldset align="center">
         <button type="button" class="summary btn button btn-primary button1 hide">Get summary!</button>
       </fieldset>
       <div class="progress progress-striped active hide">
@@ -45,12 +45,16 @@
   </div>
 </div>
 
-<div id="modalText" class="modal" form="">
-  <div class="modal-content">
-    <form id="txtForm">
-      <textarea rows="4" cols="100" name="textInput" form="upload-file">Copy/paste text to summarize</textarea>
-      <input class="textSubmitBtn btn button btn-primary button1" type="submit">
-    </form>
+<!-- Modal -->
+<div class="modal fade" id="modalText" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <textarea id="textArea" name="inputText" rows="5" form="upload-file"></textarea>
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <button type="button" class="saveTextBtn btn btn-primary button1" data-dismiss="modal">Save text</button>
+      </div>
+    </div>
   </div>
 </div>
 
