@@ -81,6 +81,21 @@ channel.bind('done', function(r) {
     messageBox.html('');
     resetEverything();
   }
+
+  else if (r.data == 'empty') {
+    $("#alert-text").html('<strong>Please upload a PDF with a name.</strong>');
+    $(".alert").addClass("in");
+    messageBox.html('');
+    resetEverything();
+  }
+
+  else if (r.data == 'big') {
+    $("#alert-text").html('<strong>Please upload a PDF less than 20 pages.</strong>');
+    $(".alert").addClass("in");
+    messageBox.html('');
+    resetEverything();
+  }
+
   else {
     messageBox.html('<a href="' + r.unique_url + '" download>Download the file!</a>')
     done();
