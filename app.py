@@ -74,7 +74,7 @@ def status():
 @app.route('/process', methods=['GET', 'POST'])
 def call_celery():
   # start
-    session_id = session['id']
+  session_id = session['id']
   pusher_client.trigger(session_id, 'my-event', {'message': 'initializing...', 'progress': 0})
   files = request.files
   # check if the post request has the file part
