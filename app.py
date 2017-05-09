@@ -14,14 +14,25 @@ import pusher
 import nltk
 from collections import Counter
 from sklearn.feature_extraction.text import TfidfVectorizer
+from tasks import make_celery
+import base64
+import pickle
+import time
 
 app = Flask(__name__)
 app.config.update(
   PROPAGATE_EXCEPTIONS = True,
   MAX_CONTENT_LENGTH = 32 * 1024 * 1024,
   UPLOAD_FOLDER = './files',
-  SECRET_KEY = 'oh so secret'
+  SECRET_KEY = 'oh so secret',
+  CELERY_BROKER_URL='redis://localhost:6379',
+  CELERY_RESULT_BACKEND='redis://localhost:6379',
+  CELERY_TASK_SERIALIZER = 'pickle',
+  CELERY_RESULT_SERIALIZER = 'json',
+  CELERY_ACCEPT_CONTENT = ['json', 'pickle']
 )
+
+celery = make_celery(app)
 
 if 'DYNO' in os.environ: # only trigger SSLify if the app is running on Heroku
   sslify = SSLify(app)
@@ -61,37 +72,54 @@ def status():
 # logic stuff here
 # we now want to store in S3, not local files
 @app.route('/process', methods=['GET', 'POST'])
-def process():
+def call_celery():
+  files = request.files
   session_id = session['id']
   # check if the post request has the file part
-  if 'file' not in request.files:
+  if 'file' not in files:
     return json.dumps({'data':'sorry, no file'});
-  # receiving file
-  file = request.files['file']
-  length = int(request.form['length'])//10
+
+  file = files['file']
+  filename = file.filename
 
   # if user does not select file, browser also
   # submit a empty part without filename
-  if file.filename == '':
+  if filename == '':
     return json.dumps({'data':'name'});
-  if file and allowed_file(file.filename):
-    fname = secure_filename(file.filename)
+
+  file.stream.seek(0)
+  file_contents = base64.b64encode(file.read())
+  # file_contents = str(file.read())
+  form = request.form
+  r = process.delay(file_contents, filename, form, session_id)
+  while not r.ready():
+    time.sleep(1)
+  return r.get()
+
+@celery.task()
+def process(file, filename, form, session_id):
+  # receiving file
+  f = base64.b64decode(file)
+  length = int(form['length'])//10
+
+  if file and allowed_file(filename):
+    fname = secure_filename(filename)
     fname_without_extension = fname.split('.')[0]
     # reading pdf
-    pusher_client.trigger(session['id'], 'my-event', {'message': 'uploading file', 'progress': 10})
-    blob = file.read()
+    pusher_client.trigger(session_id, 'my-event', {'message': 'uploading file', 'progress': 10})
+    blob = f
 
-    pusher_client.trigger(session['id'], 'my-event', {'message': 'converting file', 'progress': 20})
+    pusher_client.trigger(session_id, 'my-event', {'message': 'converting file', 'progress': 20})
     # converting
     req_image = []
     response_string = ""
     with Image(blob=blob, resolution=300) as img:
       with img.convert('png') as converted:
-        pusher_client.trigger(session['id'], 'my-event', {'message': 'processing pdf', 'progress': 40})
+        pusher_client.trigger(session_id, 'my-event', {'message': 'processing pdf', 'progress': 40})
         for single_img in converted.sequence:
           img_page = Image(image=single_img)
           req_image.append(img_page.make_blob('png'))
-        pusher_client.trigger(session['id'], 'my-event', {'message': 'performing OCR', 'progress': 50})
+        pusher_client.trigger(session_id, 'my-event', {'message': 'performing OCR', 'progress': 50})
         for final_img in req_image:
           response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)).convert('RGB'))
 
@@ -99,11 +127,11 @@ def process():
     response_string = 'please only upload a pdf'
 
   # summarization
-  pusher_client.trigger(session['id'], 'my-event', {'message': 'summarizing', 'progress': 60})
+  pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
   response_string = summarize(response_string.replace('\n', ' '), length)
 
   # text to speech
-  pusher_client.trigger(session['id'], 'my-event', {'message': 'converting to mp3', 'progress': 70})
+  pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 70})
   if len(response_string) != 0:
     tts = gTTS(text=response_string, lang='en')
     f = TemporaryFile()
@@ -116,11 +144,11 @@ def process():
     return json.dumps({'data':'', 'unique_url':'empty'});
 
   # let the user download it, expires after 20 minutes
-  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + file.filename[:-4] + '.mp3'}, ExpiresIn=1200)
+  url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_key, 'ResponseContentDisposition': 'attachment; filename=' + filename[:-4] + '.mp3'}, ExpiresIn=1200)
 
-  pusher_client.trigger(session['id'], 'my-event', {'message': 'done!', 'progress': 100})
+  pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
-  return json.dumps({'data':response_string, 'unique_url':url});
+  return json.dumps({'data':response_string, 'unique_url':url})
 
 # helper methods
 def summarize(text, n):
