@@ -73,8 +73,10 @@ def status():
 # we now want to store in S3, not local files
 @app.route('/process', methods=['GET', 'POST'])
 def call_celery():
+  # start
+    session_id = session['id']
+  pusher_client.trigger(session_id, 'my-event', {'message': 'initializing...', 'progress': 0})
   files = request.files
-  session_id = session['id']
   # check if the post request has the file part
   if 'file' not in files:
     return json.dumps({'data':'empty'});
