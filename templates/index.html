@@ -29,14 +29,27 @@
             <span id = "chooseText">Choose File</span>
             <input class="upload" name="file" type="file" id="file">
           </fieldset>
+          <fieldset class="textBoxBtn btn button btn-primary button1">
+            <span id="textBtnText">Copy/Paste Text</span>
+          </fieldset>
         </div>
-      <fieldset>
+      </div>
+      <fieldset class>
         <button type="button" class="summary btn button btn-primary button1 hide">Get summary!</button>
       </fieldset>
       <div class="progress progress-striped active hide">
         <div class="progress-bar progress-bar-info" id='realtime-progress-bar' role="progressbar" style="width: 0%"></div>
       </div>
       <p class="messages"></p>
+    </form>
+  </div>
+</div>
+
+<div id="modalText" class="modal" form="">
+  <div class="modal-content">
+    <form id="txtForm">
+      <textarea rows="4" cols="100" name="textInput" form="upload-file">Copy/paste text to summarize</textarea>
+      <input class="textSubmitBtn btn button btn-primary button1" type="submit">
     </form>
   </div>
 </div>

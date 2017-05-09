@@ -47,10 +47,21 @@ $('.summary').on('click', function(e) {
   }
 });
 
-function addTextBox() {
-  var element = document.createElement("input");
-  document.getElementById("uploadOptions").appendChild(element);
+$('.textBoxBtn').click(function(e) {
+  var modal = document.getElementById("modalText");
+  modal.style.display = "block";
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }
+});
+
+$('.textSubmitBtn').click(function(e) {
+  $(".summary").removeClass("hide");
+})
 
 $(".upload").change(function(){
   var name = $('#file').prop("files")[0].name
