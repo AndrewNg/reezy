@@ -101,7 +101,7 @@ def call_celery():
 def process(file, filename, form, session_id):
   # receiving file
   f = base64.b64decode(file)
-  length = int(form['length'])//10
+  length = int(form['length'])//8
 
   if file and allowed_file(filename):
     fname = secure_filename(filename)
@@ -191,10 +191,16 @@ def summarize(text, n):
     tfidfs[names[item]] = weights[0,item]
 
   # split text into sentences
-  sentences = nltk.tokenize.sent_tokenize(text)
+  stokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+  extra_abbrevs = ['ca','e.g','et al','etc','i.e','p.a','p.s','ps','r.i.p','hon','rev','assn','dept','est','fig','hrs','mt','no','oz','sq','abbr','adj','adv','obj','pl','poss','b.a','b.sc','m.a','m.d','b.c','r.s.v.p','a.s.a.p','e.t.a','b.y.o.b','d.i.y','blvd','rd','sgt','cl','capt','cf','comm','conf','conj','www','apr','deriv','eccl','esq','esp','freq','publ']
+  stokenizer._params.abbrev_types.update(extra_abbrevs)
+  sentences = stokenizer.tokenize(text)
   scores = {}
   for i in range(0,len(sentences)):
-    scores[i] = get_score(sentences[i], tfidfs)
+    if len(sentences[i]) == 1:
+      scores[i] = 0
+    else:
+      scores[i] = get_score(sentences[i])
   sorts = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
 
   # select top n sentences (from user input)
