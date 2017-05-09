@@ -25,7 +25,7 @@ $('.summary').on('click', function(e) {
       contentType: false,
       processData: false,
       success: function(result) {
-        console.log('ayy')
+
       },
     error: function(result) {
       $(".summary").removeAttr("disabled");
