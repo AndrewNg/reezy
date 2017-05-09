@@ -19,7 +19,8 @@ app = Flask(__name__)
 app.config.update(
   PROPAGATE_EXCEPTIONS = True,
   MAX_CONTENT_LENGTH = 32 * 1024 * 1024,
-  UPLOAD_FOLDER = './files'
+  UPLOAD_FOLDER = './files',
+  SECRET_KEY = 'oh so secret'
 )
 
 if 'DYNO' in os.environ: # only trigger SSLify if the app is running on Heroku
@@ -34,22 +35,20 @@ pusher_client = pusher.Pusher(
 )
 
 # initialize S3
-session = boto3.Session(
+aws_session = boto3.Session(
     aws_access_key_id=os.environ['S3_KEY'],
     aws_secret_access_key=os.environ['S3_SECRET']
 )
-client = session.client('s3')
-s3 = session.resource('s3')
+client = aws_session.client('s3')
+s3 = aws_session.resource('s3')
 bucket = s3.Bucket('reezy')
-
-session['id'] = 'null'
 
 @app.route('/')
 @app.route('/index')
 def index():
   # channel for pusher
   session['id'] = str(uuid.uuid4())
-  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'], 'session_id'=session['id'])
+  return render_template('index.html', pusher_key=os.environ['PUSHER_KEY'], session_id=session['id'])
 
 @app.route('/about')
 def about():
@@ -63,6 +62,7 @@ def status():
 # we now want to store in S3, not local files
 @app.route('/process', methods=['GET', 'POST'])
 def process():
+  session_id = session['id']
   # check if the post request has the file part
   if 'file' not in request.files:
     return json.dumps({'data':'sorry, no file'});
