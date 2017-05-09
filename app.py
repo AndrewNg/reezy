@@ -120,17 +120,16 @@ def process(file, filename, form, session_id):
         for single_img in converted.sequence:
           img_page = Image(image=single_img)
           req_image.append(img_page.make_blob('png'))
+          # if it's really big
+          if len(req_image) > 20:
+            pusher_client.trigger(session_id, 'done', {'data': 'big'})
+            return
         pusher_client.trigger(session_id, 'my-event', {'message': 'performing OCR', 'progress': 50})
         for final_img in req_image:
           response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)).convert('RGB'))
 
   else:
     response_string = 'please only upload a pdf'
-
-  # if it's really big
-  if len(req_image) > 20:
-    pusher_client.trigger(session_id, 'done', {'data': 'big'})
-    return
 
   # summarization
   pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
