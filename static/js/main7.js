@@ -25,42 +25,7 @@ $('.summary').on('click', function(e) {
       contentType: false,
       processData: false,
       success: function(result) {
-        $(".summary").removeAttr("disabled");
-        r = JSON.parse(result);
-
-        // handle failure cases
-        if (r.data == '') {
-          $("#alert-text").html('<strong>Sorry, unable to process PDF.</strong>');
-          $(".alert").addClass("in");
-          messageBox.html('');
-          resetEverything();
-        }
-
-        else if (r.data == 'empty') {
-          $("#alert-text").html('<strong>Please upload a PDF with a name.</strong>');
-          $(".alert").addClass("in");
-          messageBox.html('');
-          resetEverything();
-        }
-
-        else if (r.data == 'big') {
-          $("#alert-text").html('<strong>Please upload a PDF less than 20 pages.</strong>');
-          $(".alert").addClass("in");
-          messageBox.html('');
-          resetEverything();
-        }
-
-        // shouldn't happen
-        else if (r.data == 'name') {
-          $("#alert-text").html('<strong>Sorry, please submit a file with content.</strong>');
-          $(".alert").addClass("in");
-          messageBox.html('');
-          resetEverything();
-        }
-        else {
-          messageBox.html('<a href="' + r.unique_url + '" download>Download the file!</a>')
-          done();
-        }
+        console.log('ayy')
       },
     error: function(result) {
       $(".summary").removeAttr("disabled");
