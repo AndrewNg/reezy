@@ -1,4 +1,5 @@
 $('.summary').on('click', function(e) {
+  e.preventDefault();
   $(".summary").attr("disabled", "disabled");
   var length = $('.length')[0].value;
   var progressBar = $('.progress');
@@ -12,7 +13,6 @@ $('.summary').on('click', function(e) {
   }
 
   else {
-    e.preventDefault();
     var form_data = new FormData($('#upload-file')[0]);
 
     form_data.append('file', $('#file').prop("files")[0]);
