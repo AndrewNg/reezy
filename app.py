@@ -92,9 +92,9 @@ def call_celery():
   # file_contents = str(file.read())
   form = request.form
   r = process.delay(file_contents, filename, form, session_id)
-  while not r.ready():
-    time.sleep(1)
-  return r.get()
+  # while not r.ready():
+  #   time.sleep(1)
+  return 'success'
 
 @celery.task()
 def process(file, filename, form, session_id):
@@ -148,7 +148,7 @@ def process(file, filename, form, session_id):
 
   pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
-  return json.dumps({'data':response_string, 'unique_url':url})
+  pusher_client.trigger(session_id, 'done', {'data': response_string, 'unique_url':url})
 
 # helper methods
 def summarize(text, n):
