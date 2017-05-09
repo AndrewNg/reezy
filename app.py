@@ -197,10 +197,10 @@ def summarize(text, n):
   sentences = stokenizer.tokenize(text)
   scores = {}
   for i in range(0,len(sentences)):
-    if len(sentences[i]) == 1:
+    if len(sentences[i].split(' ')) <= 5:
       scores[i] = 0
     else:
-      scores[i] = get_score(sentences[i])
+      scores[i] = get_score(sentences[i], tfidfs)
   sorts = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
 
   # select top n sentences (from user input)
