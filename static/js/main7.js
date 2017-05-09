@@ -1,4 +1,5 @@
 $('.summary').on('click', function(e) {
+  e.preventDefault();
   $(".summary").attr("disabled", "disabled");
   var length = $('.length')[0].value;
   var progressBar = $('.progress');
@@ -12,7 +13,6 @@ $('.summary').on('click', function(e) {
   }
 
   else {
-    e.preventDefault();
     var form_data = new FormData($('#upload-file')[0]);
 
     form_data.append('file', $('#file').prop("files")[0]);
@@ -36,9 +36,23 @@ $('.summary').on('click', function(e) {
           resetEverything();
         }
 
+        else if (r.data == 'empty') {
+          $("#alert-text").html('<strong>Please upload a PDF with a name.</strong>');
+          $(".alert").addClass("in");
+          messageBox.html('');
+          resetEverything();
+        }
+
+        else if (r.data == 'big') {
+          $("#alert-text").html('<strong>Please upload a PDF less than 20 pages.</strong>');
+          $(".alert").addClass("in");
+          messageBox.html('');
+          resetEverything();
+        }
+
         // shouldn't happen
         else if (r.data == 'name') {
-          $("#alert-text").html('<strong>Sorry, please submit a file with a name.</strong>');
+          $("#alert-text").html('<strong>Sorry, please submit a file with content.</strong>');
           $(".alert").addClass("in");
           messageBox.html('');
           resetEverything();

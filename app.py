@@ -65,7 +65,7 @@ def process():
   session_id = session['id']
   # check if the post request has the file part
   if 'file' not in request.files:
-    return json.dumps({'data':'sorry, no file'});
+    return json.dumps({'data':'empty'});
   # receiving file
   file = request.files['file']
   length = int(request.form['length'])//10
@@ -97,6 +97,10 @@ def process():
 
   else:
     response_string = 'please only upload a pdf'
+
+  # if it's really big
+  if len(req_image) > 20:
+    return json.dumps({'data': 'big'})
 
   # summarization
   pusher_client.trigger(session['id'], 'my-event', {'message': 'summarizing', 'progress': 60})
