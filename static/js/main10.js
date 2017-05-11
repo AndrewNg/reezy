@@ -9,14 +9,19 @@ $('.summary').on('click', function(e) {
   progressBar.width('0%');
 
 
-  if (length < 6) {
-    $("#alert-text").html('<strong>Please submit a time greater than 10 seconds.</strong>');
+  if (length < 6 || length > 600) {
+    $("#alert-text").html('<strong>Please submit a time between 10 seconds and 10 minutes.</strong>');
     $(".alert").addClass("in");
     messageBox.html('');
     resetExceptFile();
+    $(".summary").removeAttr("disabled");
   }
 
   else {
+    if ($(".alert").hasClass("in")) {
+      $(".alert").removeClass("in");
+    }
+
     var form_data = new FormData($('#upload-file')[0]);
 
     form_data.append('file', $('#file').prop("files")[0]);

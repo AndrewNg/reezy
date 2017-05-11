@@ -163,7 +163,7 @@ def process(file, filename, form, session_id):
 
   pusher_client.trigger(session_id, 'my-event', {'message': 'done!', 'progress': 100})
 
-  pusher_client.trigger(session_id, 'done', {'data': response_string, 'mp3_url':mp3_url, 'text_url':text_url})
+  pusher_client.trigger(session_id, 'done', {'data': 'done', 'mp3_url':mp3_url, 'text_url':text_url})
 
   return
 
@@ -202,6 +202,10 @@ def summarize(text, n):
     else:
       scores[i] = get_score(sentences[i], tfidfs)
   sorts = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
+
+  # handle edge case where requested n > actual n
+  if(n > len(sentences)):
+    return text
 
   # select top n sentences (from user input)
   indices = []
