@@ -150,7 +150,9 @@ def process(file, filename, form, session_id):
     unique_mp3 = unique_key + '.mp3'
     unique_text = unique_key + '.txt'
     bucket.put_object(Key=unique_mp3, Body=f_mp3)
+    cron_clear.apply_async(args=[unique_mp3], countdown=1800)
     bucket.put_object(Key=unique_text, Body=f_text)
+    cron_clear.apply_async(args=[unique_text], countdown=1800)
     f_mp3.close()
     f_text.close()
   else:
@@ -168,6 +170,10 @@ def process(file, filename, form, session_id):
   return
 
 # cron to clear out S3
+@celery.task()
+def cron_clear(key):
+  client.delete_object(Bucket='reezy', Key=key)
+  return
 
 # helper methods for summarization
 def summarize(text, n):
