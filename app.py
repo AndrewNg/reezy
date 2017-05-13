@@ -74,11 +74,16 @@ def status():
 @app.route('/process', methods=['GET', 'POST'])
 def call_celery():
   # start
+  text = request.form['text']
   session_id = session['id']
   files = request.files
   # check if the post request has the file part
+  if len(text) != 0:
+    form = request.form
+    r = process.delay(text.encode(), None, form, session_id)
   if 'file' not in files:
-    return json.dumps({'data':'empty'});
+      return json.dumps({'data':'empty'});
+
 
   file = files['file']
   filename = file.filename
@@ -99,41 +104,44 @@ def call_celery():
 
 @celery.task()
 def process(file, filename, form, session_id):
-  # receiving file
-  f = base64.b64decode(file)
   length = int(form['length'])//8
+  if filename != None:
+    # receiving file
+    f = base64.b64decode(file)
 
-  if file and allowed_file(filename):
-    fname = secure_filename(filename)
-    fname_without_extension = fname.split('.')[0]
-    # reading pdf
-    pusher_client.trigger(session_id, 'my-event', {'message': 'uploading file', 'progress': 10})
-    blob = f
+    if file and allowed_file(filename):
+      fname = secure_filename(filename)
+      fname_without_extension = fname.split('.')[0]
+      # reading pdf
+      pusher_client.trigger(session_id, 'my-event', {'message': 'uploading file', 'progress': 10})
+      blob = f
 
-    pusher_client.trigger(session_id, 'my-event', {'message': 'converting file', 'progress': 20})
-    # converting
-    req_image = []
-    response_string = ""
-    with Image(blob=blob, resolution=300) as img:
-      with img.convert('png') as converted:
-        pusher_client.trigger(session_id, 'my-event', {'message': 'processing pdf', 'progress': 40})
-        for single_img in converted.sequence:
-          img_page = Image(image=single_img)
-          req_image.append(img_page.make_blob('png'))
-          # if it's really big
-          if len(req_image) > 20:
-            pusher_client.trigger(session_id, 'done', {'data': 'big'})
-            return
-        pusher_client.trigger(session_id, 'my-event', {'message': 'performing OCR', 'progress': 50})
-        for final_img in req_image:
-          response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)).convert('RGB'))
+      pusher_client.trigger(session_id, 'my-event', {'message': 'converting file', 'progress': 20})
+      # converting
+      req_image = []
+      response_string = ""
+      with Image(blob=blob, resolution=300) as img:
+        with img.convert('png') as converted:
+          pusher_client.trigger(session_id, 'my-event', {'message': 'processing pdf', 'progress': 40})
+          for single_img in converted.sequence:
+            img_page = Image(image=single_img)
+            req_image.append(img_page.make_blob('png'))
+            # if it's really big
+            if len(req_image) > 20:
+              pusher_client.trigger(session_id, 'done', {'data': 'big'})
+              return
+          pusher_client.trigger(session_id, 'my-event', {'message': 'performing OCR', 'progress': 50})
+          for final_img in req_image:
+            response_string = response_string + pytesseract.image_to_string(PImage.open(io.BytesIO(final_img)).convert('RGB'))
 
+    else:
+      response_string = 'please only upload a pdf'
   else:
-    response_string = 'please only upload a pdf'
+    response_string = file
 
   # summarization
   pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
-  response_string = summarize(response_string.replace('\n', ' '), length)
+  response_string = summarize(response_string.decode().replace('\n', ' '), length)
 
   # text to speech and regular text file storage
   pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 70})
@@ -160,6 +168,8 @@ def process(file, filename, form, session_id):
     return
 
   # let the user download it, expires after 20 minutes
+  if filename == None:
+    filename = "summary"
   mp3_url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_mp3, 'ResponseContentDisposition': 'attachment; filename=' + filename[:-4] + '.mp3'}, ExpiresIn=1200)
   text_url = client.generate_presigned_url('get_object', Params={'Bucket': 'reezy', 'Key': unique_text,'ResponseContentDisposition': 'attachment; filename=' + filename[:-4] + '.txt'}, ExpiresIn=1200)
 
