@@ -66,7 +66,10 @@ $('.saveTextBtn').click(function(e) {
     $(".alert").addClass("in");
   }
   else {
-    $(".textBoxBtn").addClass("hide");
+    $(".modalText").addClass("hide");
+    $(".fileUpload").addClass("hide");
+    $(".filename").html("Text submitted!");
+    $(".filename").removeClass("hide");
     $(".summary").removeClass("hide");
   }
 });
@@ -94,6 +97,7 @@ $(".upload").change(function(){
     }
 
     $(".fileUpload").addClass("hide");
+    $(".modalText").addClass("hide");
 
     $(".filename").html(name);
     $(".filename").removeClass("hide");
