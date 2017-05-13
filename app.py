@@ -137,11 +137,11 @@ def process(file, filename, form, session_id):
     else:
       response_string = 'please only upload a pdf'
   else:
-    response_string = file
+    response_string = file.decode()
 
   # summarization
   pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
-  response_string = summarize(response_string.decode().replace('\n', ' '), length)
+  response_string = summarize(response_string.replace('\n', ' '), length)
 
   # text to speech and regular text file storage
   pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 70})
