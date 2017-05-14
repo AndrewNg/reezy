@@ -25,8 +25,8 @@ app.config.update(
   MAX_CONTENT_LENGTH = 32 * 1024 * 1024,
   UPLOAD_FOLDER = './files',
   SECRET_KEY = 'oh so secret',
-  CELERY_BROKER_URL=os.environ['REDIS_URL'],
-  CELERY_RESULT_BACKEND=os.environ['REDIS_URL'],
+  CELERY_BROKER_URL=os.environ['REDISCLOUD_URL'],
+  CELERY_RESULT_BACKEND=os.environ['REDISCLOUD_URL'],
   CELERY_TASK_SERIALIZER = 'pickle',
   CELERY_RESULT_SERIALIZER = 'json',
   CELERY_ACCEPT_CONTENT = ['json', 'pickle']
