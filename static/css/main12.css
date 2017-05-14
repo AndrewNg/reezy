@@ -20,6 +20,10 @@ h2 {
     font-family: 'Open Sans';
 }
 
+h3 {
+  color:#800020;
+}
+
 textarea {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -32,8 +36,19 @@ fieldset1 {
   float: left;
 }
 
+.buttonbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .alert {
     margin-top: 50px;
+}
+
+.messages {
+  text-align: center;
 }
 
 .button1 {
@@ -51,6 +66,18 @@ fieldset1 {
 	color: white;
 	border-color:#800020;
 }
+.button1[disabled]:hover {
+  background-color:#D3D3D3;
+  color:#800020;
+  border-color:#800020;
+}
+.button1:active {
+  background-color: #800020;
+}
+.button1:focus {
+  background-color: #800020;
+}
+
 .fileUpload input.upload {
     position: absolute;
     top: 0;
@@ -62,6 +89,10 @@ fieldset1 {
     opacity: 0;
     filter: alpha(opacity=0);
 }
+
+.progress {margin-top:50px; background: rgba(245, 245, 245, 1); border: 0px solid rgba(245, 245, 245, 1); border-radius: 4px; height: 20px;}
+.progress-bar-custom {background: rgba(128, 0, 32, 1);} 
+.progress-striped .progress-bar-custom {background-color: rgba(128, 0, 32, 1); background-image: -webkit-gradient(linear,0 100%,100% 0,color-stop(0.25,rgba(255, 255, 255, 0.15),color-stop(0.25,transparent),color-stop(0.5,transparent),color-stop(0.5,rgba(255, 255, 255, 0.15)),color-stop(0.75,rgba(255, 255, 255, 0.15)),color-stop(0.75,transparent),to(transparent))); background-image: -webkit-linear-gradient(45deg,rgba(255, 255, 255, 0.15) 25%,transparent 25%,transparent 50%,rgba(255, 255, 255, 0.15) 50%,rgba(255, 255, 255, 0.15) 75%,transparent 75%,transparent); background-image: linear-gradient(45deg,rgba(255, 255, 255, 0.15) 25%,transparent 25%,transparent 50%,rgba(255, 255, 255, 0.15) 50%,rgba(255, 255, 255, 0.15) 75%,transparent 75%,transparent); background-size: 40px 40px;}
 
 .modal-backdrop.in { 
   z-index: 0;

@@ -143,10 +143,11 @@ function done() {
   var modalText = $('.modalText')
   var summary = $('.summary');
   var buttonText = $('#chooseText')
+  var progressbar = $('.progress')
 
   fileUpload.removeClass('hide');
   summary.addClass('hide');
-  buttonText.html('Choose a file');
+  buttonText.html('Choose PDF');
   modalText.removeClass('hide');
 
 }

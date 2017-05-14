@@ -11,7 +11,7 @@
 <div class="container centered">
   <div>
     <h1> {reezy} </h1>
-    <h2 style="text-align: center">Summarized audio for PDFs</h2>
+    <h3 style="text-align: center">Summarized audio for PDFs</h3>
   </div>
   <div class="contents" align="center">
     <form id="upload-file" method="post" enctype="multipart/form-data">
@@ -24,9 +24,9 @@
         </form>
       </fieldset>
       <div class="filename hide"></div>
-        <div id="uploadOptions">
+        <div id="uploadOptions" class="buttonbox">
           <fieldset class="fileUpload btn btn-primary button1">
-            <span id = "chooseText">Choose File</span>
+            <span id = "chooseText">Choose PDF</span>
             <input class="upload" name="file" type="file" id="file">
           </fieldset>
           <fieldset>
@@ -38,9 +38,9 @@
         <button type="button" class="summary btn button btn-primary button1 hide">Get summary!</button>
       </fieldset>
       <div class="progress progress-striped active hide">
-        <div class="progress-bar progress-bar-info" id='realtime-progress-bar' role="progressbar" style="width: 0%"></div>
+        <div class="progress-bar progress-bar-info progress-bar-custom" id='realtime-progress-bar' role="progressbar" style="width: 0%"></div>
       </div>
-      <p class="messages"></p>
+      <p class="messages" text-align="center"></p>
     </form>
   </div>
 </div>
