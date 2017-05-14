@@ -19,7 +19,6 @@ from tasks import make_celery
 import base64
 import pickle
 import time
-from models import Conversion
 
 app = Flask(__name__)
 app.config.update(
@@ -32,11 +31,13 @@ app.config.update(
   CELERY_TASK_SERIALIZER = 'pickle',
   CELERY_RESULT_SERIALIZER = 'json',
   CELERY_ACCEPT_CONTENT = ['json', 'pickle'],
-  SQLALCHEMY_TRACK_MODIFICATIONS = False
+  SQLALCHEMY_TRACK_MODIFICATIONS = False,
+  SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 )
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
+
+from models import Conversion
 
 celery = make_celery(app)
 
