@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, request, redirect, make_response, session
 from flask_sslify import SSLify
+from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os, json, glob, io, uuid, sys, string, operator
 import pytesseract
@@ -31,6 +32,9 @@ app.config.update(
   CELERY_RESULT_SERIALIZER = 'json',
   CELERY_ACCEPT_CONTENT = ['json', 'pickle']
 )
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+db = SQLAlchemy(app)
 
 celery = make_celery(app)
 
