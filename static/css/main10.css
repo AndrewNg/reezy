@@ -64,7 +64,7 @@ fieldset1 {
 }
 
 .modal-backdrop.in { 
-  z-index: -1;
+  z-index: 0;
 }
 
 /* The Modal (background) */
