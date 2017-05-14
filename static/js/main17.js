@@ -123,6 +123,7 @@ function resetEverything() {
  fileUpload.removeClass('hide');
  modalText.removeClass('hide');
  messageBox.html('');
+ document.getElementById("textArea").value="";
 }
 
 // reset everything but keep the file
@@ -135,6 +136,7 @@ function resetExceptFile() {
 
  progressBar.addClass('hide');
  messageBox.html('');
+ document.getElementById("textArea").value="";
 }
 
 // at successful completion
@@ -149,5 +151,6 @@ function done() {
   summary.addClass('hide');
   buttonText.html('Choose PDF');
   modalText.removeClass('hide');
+  document.getElementById("textArea").value="";
 
 }
