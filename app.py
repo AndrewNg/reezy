@@ -81,25 +81,26 @@ def call_celery():
   if len(text) != 0:
     form = request.form
     r = process.delay(text.encode(), None, form, session_id)
-  if 'file' not in files:
+  else:
+    if 'file' not in files:
       return json.dumps({'data':'empty'});
 
 
-  file = files['file']
-  filename = file.filename
+    file = files['file']
+    filename = file.filename
 
-  # if user does not select file, browser also
-  # submit a empty part without filename
-  if filename == '':
-    return json.dumps({'data':'name'});
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if filename == '':
+      return json.dumps({'data':'name'});
 
-  file.stream.seek(0)
-  file_contents = base64.b64encode(file.read())
-  # file_contents = str(file.read())
-  form = request.form
-  r = process.delay(file_contents, filename, form, session_id)
-  # while not r.ready():
-  #   time.sleep(1)
+    file.stream.seek(0)
+    file_contents = base64.b64encode(file.read())
+    # file_contents = str(file.read())
+    form = request.form
+    r = process.delay(file_contents, filename, form, session_id)
+    # while not r.ready():
+    #   time.sleep(1)
   return 'success'
 
 @celery.task()
