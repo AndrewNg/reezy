@@ -114,12 +114,14 @@ function resetEverything() {
  var filename = $('.filename');
  var summary = $('.summary');
  var fileUpload = $('.fileUpload')
+ var modalText = $('.modalText')
 
  progressBar.addClass('hide');
  summary.addClass('hide');
  filename.addClass('hide');
  filename.html('');
  fileUpload.removeClass('hide');
+ modalText.removeClass('hide');
  messageBox.html('');
 }
 
@@ -138,10 +140,13 @@ function resetExceptFile() {
 // at successful completion
 function done() {
   var fileUpload = $('.fileUpload')
+  var modalText = $('.modalText')
   var summary = $('.summary');
   var buttonText = $('#chooseText')
 
   fileUpload.removeClass('hide');
   summary.addClass('hide');
-  buttonText.html('Choose another file');
+  buttonText.html('Choose a file');
+  modalText.removeClass('hide');
+
 }
