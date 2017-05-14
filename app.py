@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, request, redirect, make_response, session
 from flask_sslify import SSLify
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os, json, glob, io, uuid, sys, string, operator
 import pytesseract
@@ -19,6 +19,7 @@ from tasks import make_celery
 import base64
 import pickle
 import time
+from models import Conversion
 
 app = Flask(__name__)
 app.config.update(
@@ -30,7 +31,8 @@ app.config.update(
   CELERY_RESULT_BACKEND=os.environ['REDIS_URL'],
   CELERY_TASK_SERIALIZER = 'pickle',
   CELERY_RESULT_SERIALIZER = 'json',
-  CELERY_ACCEPT_CONTENT = ['json', 'pickle']
+  CELERY_ACCEPT_CONTENT = ['json', 'pickle'],
+  SQLALCHEMY_TRACK_MODIFICATIONS = False
 )
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
