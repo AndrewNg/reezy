@@ -81,20 +81,26 @@ def status():
 @app.route('/process', methods=['GET', 'POST'])
 def call_celery():
   # start
+  c_data = {}
   text = request.form['text']
   session_id = session['id']
   files = request.files
   # check if the post request has the file part
   if len(text) != 0:
+    c_data['submission_type'] = 1
+    c_data['filename'] = None
+    c_data['filesize'] = None
     form = request.form
-    r = process.delay(text.encode(), None, form, session_id)
+    r = process.delay(text.encode(), None, form, session_id, c_data)
   else:
+    c_data['submission_type'] = 0
     if 'file' not in files:
       return json.dumps({'data':'empty'});
 
-
     file = files['file']
     filename = file.filename
+    c_data['filename'] = filename
+    c_data['filesize'] = request.form['size']
 
     # if user does not select file, browser also
     # submit a empty part without filename
@@ -105,14 +111,15 @@ def call_celery():
     file_contents = base64.b64encode(file.read())
     # file_contents = str(file.read())
     form = request.form
-    r = process.delay(file_contents, filename, form, session_id)
+    r = process.delay(file_contents, filename, form, session_id, c_data)
     # while not r.ready():
     #   time.sleep(1)
   return 'success'
 
 @celery.task()
-def process(file, filename, form, session_id):
+def process(file, filename, form, session_id, c_data):
   length = int(form['length'])//8
+  c_data['requested_length'] = length
   if filename != None:
     # receiving file
     f = base64.b64decode(file)
@@ -149,7 +156,9 @@ def process(file, filename, form, session_id):
 
   # summarization
   pusher_client.trigger(session_id, 'my-event', {'message': 'summarizing', 'progress': 60})
-  response_string = summarize(response_string.replace('\n', ' '), length)
+  response_string, sentence_length = summarize(response_string.replace('\n', ' '), length)
+
+  c_data['sentence_length'] = sentence_length
 
   # text to speech and regular text file storage
   pusher_client.trigger(session_id, 'my-event', {'message': 'converting to mp3', 'progress': 70})
@@ -185,6 +194,11 @@ def process(file, filename, form, session_id):
 
   pusher_client.trigger(session_id, 'done', {'data': 'done', 'mp3_url':mp3_url, 'text_url':text_url})
 
+  # create and insert our Conversion
+  conversion = Conversion(**c_data)
+  db.session.add(conversion)
+  db.session.commit()
+
   return
 
 # cron to clear out S3
@@ -219,6 +233,7 @@ def summarize(text, n):
   extra_abbrevs = ['ca','e.g','et al','etc','i.e','p.a','p.s','ps','r.i.p','hon','rev','assn','dept','est','fig','hrs','mt','no','oz','sq','abbr','adj','adv','obj','pl','poss','b.a','b.sc','m.a','m.d','b.c','r.s.v.p','a.s.a.p','e.t.a','b.y.o.b','d.i.y','blvd','rd','sgt','cl','capt','cf','comm','conf','conj','www','apr','deriv','eccl','esq','esp','freq','publ']
   stokenizer._params.abbrev_types.update(extra_abbrevs)
   sentences = stokenizer.tokenize(text)
+
   scores = {}
   for i in range(0,len(sentences)):
     if len(sentences[i].split(' ')) <= 5:
@@ -229,7 +244,7 @@ def summarize(text, n):
 
   # handle edge case where requested n > actual n
   if(n > len(sentences)):
-    return text
+    return text, len(sentences)
 
   # select top n sentences (from user input)
   indices = []
@@ -242,7 +257,7 @@ def summarize(text, n):
   for index in sort_indices:
     output = output + sentences[index] + ' '
 
-  return output
+  return output, len(sentences)
 
 def stem(tokens, stemmer):
   stems = []

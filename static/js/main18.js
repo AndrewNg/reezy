@@ -25,7 +25,10 @@ $('.summary').on('click', function(e) {
     var form_data = new FormData($('#upload-file')[0]);
 
     form_data.append('file', $('#file').prop("files")[0]);
-    form_data.append('text', $('textarea').val())
+    form_data.append('text', $('textarea').val());
+
+    if ($('#file').prop("files")[0])
+      form_data.append('size', $('#file').prop("files")[0].size);
 
     progressBarDiv.removeClass('hide');
     $.ajax({
